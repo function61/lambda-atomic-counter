@@ -2,4 +2,4 @@
 
 cd src/
 npm install
-zip -r ../AtomicCounter.zip index.js node_modules
+zip -q -r ../AtomicCounter.zip index.js node_modules
