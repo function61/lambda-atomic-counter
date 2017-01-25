@@ -57,4 +57,15 @@ describe('Lambda service', function (){
 			done();
 		})
 	});
+
+	it('should abort increment if counter not specified', function (done){
+		index.handler(makeRequest('POST /counter/increment'), null, function (err, resp){
+			if (err) { throw err; }
+
+			assert.equal(resp.statusCode, 200);
+			assert.equal(resp.body, '{"error_code":"counter_not_specified"}');
+
+			done();
+		})
+	});
 });
