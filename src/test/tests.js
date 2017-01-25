@@ -14,6 +14,16 @@ function makeRequest(spec) { // convenience method to remove test boilerplate
 	};
 }
 
+// override the productionIncrementAdapter(), so our tests return
+// consistent results and try to hit the actual database
+global.incrementAdapter = function testingIncrementAdapter(counter, next) {
+	if (counter === 'counter_that_fails') {
+		next(new Error('Fictional error connecting to database'));
+	} else {
+		next(null, 123);
+	}
+}
+
 describe('testing-internal helper: makeRequest', function (){
 	it('should parse query strings', function (){
 		assert.equal(JSON.stringify(makeRequest('GET /person?name=joonas')), '{"httpMethod":"GET","path":"/person","queryStringParameters":{"name":"joonas"}}');
@@ -52,7 +62,18 @@ describe('Lambda service', function (){
 			if (err) { throw err; }
 
 			assert.equal(resp.statusCode, 200);
-			assert.equal(resp.body, '{"counter":"poop","new_value":1234}');
+			assert.equal(resp.body, '{"counter":"poop","new_value":123}');
+
+			done();
+		})
+	});
+
+	it('should return errors gracefully', function (done){
+		index.handler(makeRequest('POST /counter/increment?counter=counter_that_fails'), null, function (err, resp){
+			if (err) { throw err; }
+
+			assert.equal(resp.statusCode, 200);
+			assert.equal(resp.body, '{"error_code":"error_incrementing_probably_database_error","error_description":"Error: Fictional error connecting to database"}');
 
 			done();
 		})

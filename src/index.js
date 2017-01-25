@@ -1,10 +1,23 @@
 var atomicCounter = require('dynamodb-atomic-counter');
 
-function handleError(callback, errorCode) {
+function handleError(callback, errorCode, err) {
+	var struct = { error_code: errorCode };
+
+	if (err) {
+		struct.error_description = err.toString();
+	}
+
 	callback(null, {
 		statusCode: 200,
-		body: JSON.stringify({ error_code: errorCode })
+		body: JSON.stringify(struct)
 	});
+}
+
+// not used by tests
+function productionIncrementAdapter(counter, next) {
+	atomicCounter.increment(counter).done(function (value) {
+		next(null, value);
+	}).fail(next);	
 }
 
 var apis = {
@@ -16,10 +29,19 @@ var apis = {
 
 		var counter = event.queryStringParameters.counter;
 
-		callback(null, {
-			statusCode: 200,
-			body: JSON.stringify({ counter: counter, new_value: 1234 })
-		});
+		var incrementAdapter = global.incrementAdapter || productionIncrementAdapter;
+
+		incrementAdapter(counter, function (err, value){
+			if (err) {
+				handleError(callback, 'error_incrementing_probably_database_error', err);
+				return;
+			}
+
+			callback(null, {
+				statusCode: 200,
+				body: JSON.stringify({ counter: counter, new_value: value })
+			});
+		})
 	},
 
 	'Unsupported event': function (event, context, callback) {
