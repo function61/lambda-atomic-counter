@@ -1,7 +1,30 @@
 var assert = require('assert')
+  , url = require('url')
   , index = require('../index');
 
-describe('tests', function (){
+function makeRequest(spec) { // convenience method to remove test boilerplate
+	var parsed = /^(GET|POST) (.+)/.exec(spec);
+
+	var urlParsed = url.parse(parsed[2], true);
+
+	return {
+		httpMethod: parsed[1],
+		path: urlParsed.pathname,
+		queryStringParameters: urlParsed.query
+	};
+}
+
+describe('testing-internal helper: makeRequest', function (){
+	it('should parse query strings', function (){
+		assert.equal(JSON.stringify(makeRequest('GET /person?name=joonas')), '{"httpMethod":"GET","path":"/person","queryStringParameters":{"name":"joonas"}}');
+	});
+
+	it('should work without a query string', function (){
+		assert.equal(JSON.stringify(makeRequest('GET /person')), '{"httpMethod":"GET","path":"/person","queryStringParameters":{}}');
+	});
+});
+
+describe('Lambda service', function (){
 	it('should handle 404 gracefully', function (done){
 		index.handler({
 			httpMethod: 'GET',
