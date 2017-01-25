@@ -2,9 +2,11 @@ var atomicCounter = require('dynamodb-atomic-counter');
 
 var apis = {
 	'POST /counter/increment': function (event, context, callback) {
+		var counter = event.queryStringParameters.counter;
+
 		callback(null, {
 			statusCode: 200,
-			body: JSON.stringify({ new_value: 1234 })
+			body: JSON.stringify({ counter: counter, new_value: 1234 })
 		});
 	},
 

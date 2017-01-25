@@ -26,10 +26,7 @@ describe('testing-internal helper: makeRequest', function (){
 
 describe('Lambda service', function (){
 	it('should handle 404 gracefully', function (done){
-		index.handler({
-			httpMethod: 'GET',
-			path: '/foo'
-		}, null, function (err, resp){
+		index.handler(makeRequest('GET /foo'), null, function (err, resp){
 			if (err) { throw err; }
 
 			assert.equal(resp.statusCode, 200);
@@ -51,14 +48,11 @@ describe('Lambda service', function (){
 	});
 
 	it('should handle increment', function (done){
-		index.handler({
-			httpMethod: 'POST',
-			path: '/counter/increment'
-		}, null, function (err, resp){
+		index.handler(makeRequest('POST /counter/increment?counter=poop'), null, function (err, resp){
 			if (err) { throw err; }
 
 			assert.equal(resp.statusCode, 200);
-			assert.equal(resp.body, '{"new_value":1234}');
+			assert.equal(resp.body, '{"counter":"poop","new_value":1234}');
 
 			done();
 		})
