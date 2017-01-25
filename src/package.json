@@ -1,0 +1,19 @@
+{
+  "name": "lambda-atomiccounter",
+  "version": "0.1.0",
+  "description": "Atomic counters served from AWS Lambda",
+  "main": "index.js",
+  "dependencies": {
+    "dynamodb-atomic-counter": "^0.1.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "repository" : {
+    "type" : "git",
+    "url" : "https://github.com/function61/lambda-atomic-counter.git"
+  },
+  "license": "Apache-2.0"
+}
