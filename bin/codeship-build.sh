@@ -1,5 +1,4 @@
 #!/bin/bash -eu
 
-echo "this is a test build script"
-
-zip -r AtomicCounter.zip src/index.js
+cd src/
+zip -r ../AtomicCounter.zip index.js
