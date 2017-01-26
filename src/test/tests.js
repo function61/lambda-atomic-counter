@@ -2,7 +2,7 @@ var assert = require('assert')
   , url = require('url')
   , index = require('../index');
 
-function makeRequest(spec) { // convenience method to remove test boilerplate
+function makeRequest(spec) { // convenience method to reduce test boilerplate
 	var parsed = /^(GET|POST) (.+)/.exec(spec);
 
 	var urlParsed = url.parse(parsed[2], true);
@@ -15,7 +15,7 @@ function makeRequest(spec) { // convenience method to remove test boilerplate
 }
 
 // override the productionIncrementAdapter(), so our tests return
-// consistent results and try to hit the actual database
+// consistent results and not try to hit the actual database
 global.incrementAdapter = function testingIncrementAdapter(counter, next) {
 	if (counter === 'counter_that_fails') {
 		next(new Error('Fictional error connecting to database'));
