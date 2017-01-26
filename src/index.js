@@ -1,6 +1,6 @@
 var atomicCounter = require('dynamodb-atomic-counter');
 
-function handleError(callback, errorCode, err) {
+function handleError(callback, httpCode, errorCode, err) {
 	var struct = { error_code: errorCode };
 
 	if (err) {
@@ -8,7 +8,7 @@ function handleError(callback, errorCode, err) {
 	}
 
 	callback(null, {
-		statusCode: 200,
+		statusCode: httpCode,
 		body: JSON.stringify(struct)
 	});
 }
@@ -23,7 +23,7 @@ function productionIncrementAdapter(counter, next) {
 var apis = {
 	'POST /counter/increment': function (event, context, callback) {
 		if (!event.queryStringParameters.counter) {
-			handleError(callback, 'counter_not_specified');
+			handleError(callback, 400, 'counter_not_specified');
 			return;
 		}
 
@@ -33,7 +33,7 @@ var apis = {
 
 		incrementAdapter(counter, function (err, value){
 			if (err) {
-				handleError(callback, 'error_incrementing_probably_database_error', err);
+				handleError(callback, 500, 'error_incrementing_probably_database_error', err);
 				return;
 			}
 
@@ -45,11 +45,11 @@ var apis = {
 	},
 
 	'Unsupported event': function (event, context, callback) {
-		handleError(callback, 'unsupported_event');
+		handleError(callback, 400, 'unsupported_event');
 	},
 
 	'API not found': function (event, context, callback) {
-		handleError(callback, '404_not_found');
+		handleError(callback, 404, '404_not_found');
 	}
 }
 

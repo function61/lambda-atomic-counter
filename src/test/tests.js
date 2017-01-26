@@ -39,7 +39,7 @@ describe('Lambda service', function (){
 		index.handler(makeRequest('GET /foo'), null, function (err, resp){
 			if (err) { throw err; }
 
-			assert.equal(resp.statusCode, 200);
+			assert.equal(resp.statusCode, 404);
 			assert.equal(resp.body, '{"error_code":"404_not_found"}');
 
 			done();
@@ -50,7 +50,7 @@ describe('Lambda service', function (){
 		index.handler({ unknown: 'event' }, null, function (err, resp){
 			if (err) { throw err; }
 
-			assert.equal(resp.statusCode, 200);
+			assert.equal(resp.statusCode, 400);
 			assert.equal(resp.body, '{"error_code":"unsupported_event"}');
 
 			done();
@@ -72,7 +72,7 @@ describe('Lambda service', function (){
 		index.handler(makeRequest('POST /counter/increment?counter=counter_that_fails'), null, function (err, resp){
 			if (err) { throw err; }
 
-			assert.equal(resp.statusCode, 200);
+			assert.equal(resp.statusCode, 500);
 			assert.equal(resp.body, '{"error_code":"error_incrementing_probably_database_error","error_description":"Error: Fictional error connecting to database"}');
 
 			done();
@@ -83,7 +83,7 @@ describe('Lambda service', function (){
 		index.handler(makeRequest('POST /counter/increment'), null, function (err, resp){
 			if (err) { throw err; }
 
-			assert.equal(resp.statusCode, 200);
+			assert.equal(resp.statusCode, 400);
 			assert.equal(resp.body, '{"error_code":"counter_not_specified"}');
 
 			done();
