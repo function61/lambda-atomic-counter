@@ -134,3 +134,13 @@ Now you should see the `Invoke URL: https://m2toimgsc8.execute-api.us-east-1.ama
 The `m2toimgsc8` part is your API ID, which you would use in place of `REDACTED` from the usage example.
 
 That's it!
+
+
+Support / contact
+-----------------
+
+Basic support (no guarantees) for issues / feature requests via GitHub issues.
+
+Paid support is available via [function61.com/consulting](https://function61.com/consulting/)
+
+Contact options (email, Twitter etc.) at [function61.com](https://function61.com/)
